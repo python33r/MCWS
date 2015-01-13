@@ -12,7 +12,7 @@ from datetime import datetime
 URL = "http://{}:52199/MCWS/v1/Files/Search"
 
 
-def get_plays(server):
+def get_played_tracks(server):
 
     # Obtain file details via MCWS
 
@@ -32,13 +32,12 @@ def get_plays(server):
         track = item.find("Field[@Name='Name']")
         num_plays = item.find("Field[@Name='Number Plays']")
         last_played = item.find("Field[@Name='Last Played']")
-        last = datetime.fromtimestamp(int(last_played.text))
         data.append({
-          "artist"      : artist.text,
-          "album"       : album.text,
-          "track"       : track.text,
-          "num_plays"   : int(num_plays.text),
-          "last_played" : last
+          "artist" : artist.text,
+          "album"  : album.text,
+          "title"  : track.text,
+          "plays"  : int(num_plays.text),
+          "last"   : datetime.fromtimestamp(int(last_played.text))
         })
 
     return data
@@ -48,5 +47,9 @@ if __name__ == "__main__":
     from configparser import ConfigParser
     config = ConfigParser()
     config.read("mcws.config")
-    data = get_plays(config["server"]["address"])
-    print(data)
+
+    tracks = get_played_tracks(config["server"]["address"])
+
+    for track in tracks:
+        print("{}, {}: plays={}, last at {}".format(
+          track["artist"], track["title"], track["plays"], track["last"]))
