@@ -9,14 +9,39 @@ import requests
 from xml.etree import ElementTree as et
 from datetime import datetime
 
-URL = "http://{}:52199/MCWS/v1/Files/Search"
+NOW_PLAYING_URL = "http://{}:52199/MCWS/v1/Playback/Info?Zone=-1"
+PLAYED_TRACKS_URL = "http://{}:52199/MCWS/v1/Files/Search"
+
+
+def get_now_playing(server):
+
+    # Obtain track details via MCWS
+
+	response = requests.get(NOW_PLAYING_URL.format(server))
+	root = et.fromstring(response.content)
+
+	elapsed = root.find("Item[@Name='ElapsedTimeDisplay']")
+	remaining = root.find("Item[@Name='RemainingTimeDisplay']")
+	artist = root.find("Item[@Name='Artist']")
+	album = root.find("Item[@Name='Album']")
+	track = root.find("Item[@Name='Name']")
+	status = root.find("Item[@Name='Status']")
+
+	return {
+	  "status": status.text,
+	  "elapsed": elapsed.text,
+	  "remaining": remaining.text,
+	  "artist": artist.text,
+	  "album": album.text,
+	  "track": track.text
+	}
 
 
 def get_played_tracks(server):
 
     # Obtain file details via MCWS
 
-    response = requests.get(URL.format(server))
+    response = requests.get(PLAYED_TRACKS_URL.format(server))
     root = et.fromstring(response.content)
 
     # Find all returned items with a 'Number Plays' field
