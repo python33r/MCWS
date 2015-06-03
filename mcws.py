@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jan 12 23:20:26 2015
-
-@author: Nick Efford
+Tools for working with the JRiver Media Center Web Service.
 """
 
 import requests
@@ -10,7 +8,7 @@ from xml.etree import ElementTree as et
 from datetime import datetime
 
 
-class Server:
+class Service:
 
     NOW_PLAYING_URL = "http://{}:52199/MCWS/v1/Playback/Info?Zone=-1"
     PLAYED_TRACKS_URL = "http://{}:52199/MCWS/v1/Files/Search"
