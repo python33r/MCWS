@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Tools for working with the JRiver Media Center Web Service.
+Tools for working with JRiver Media Center Web Services (MCWS).
 """
 
 import requests
@@ -31,6 +31,8 @@ class Service:
         url = self.NOW_PLAYING.format(self.address)
         response = requests.get(url)
         root = et.fromstring(response.content)
+        if root.get("Status") != "OK":
+            return None
 
         elapsed = root.find("Item[@Name='ElapsedTimeDisplay']")
         remaining = root.find("Item[@Name='RemainingTimeDisplay']")
@@ -39,8 +41,7 @@ class Service:
         track = root.find("Item[@Name='Name']")
         status = root.find("Item[@Name='Status']")
 
-        return {
-          "status": status.text,
+        details = {
           "elapsed": elapsed.text,
           "remaining": remaining.text,
           "artist": artist.text,
@@ -48,16 +49,17 @@ class Service:
           "track": track.text
         }
 
+        if status is not None:
+            details["status"] = status.text
+
+        return details
+
     def get_played_tracks(self):
         url = self.PLAYED_TRACKS.format(self.address)
         response = requests.get(url)
         root = et.fromstring(response.content)
 
-        # Find all returned items with a 'Number Plays' field
-
         items = root.findall("Item/Field[@Name='Number Plays']/..")
-
-        # Extract relevant details from each item
 
         data = []
         for item in items:
