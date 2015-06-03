@@ -10,14 +10,25 @@ from datetime import datetime
 
 class Service:
 
-    NOW_PLAYING_URL = "http://{}:52199/MCWS/v1/Playback/Info?Zone=-1"
-    PLAYED_TRACKS_URL = "http://{}:52199/MCWS/v1/Files/Search"
+    CHECK_SERVICE = "http://{}:52199/MCWS/v1/Alive"
+    NOW_PLAYING = "http://{}:52199/MCWS/v1/Playback/Info?Zone=-1"
+    PLAYED_TRACKS = "http://{}:52199/MCWS/v1/Files/Search"
 
     def __init__(self, address):
         self.address = address
+        url = self.CHECK_SERVICE.format(self.address)
+        try:
+            response = requests.get(url)
+            root = et.fromstring(response.content)
+            if root.get("Status") == "OK":
+                self.is_running = True
+            else:
+                self.is_running = False
+        except:
+            self.is_running = False
 
     def get_now_playing(self):
-        url = self.NOW_PLAYING_URL.format(self.address)
+        url = self.NOW_PLAYING.format(self.address)
         response = requests.get(url)
         root = et.fromstring(response.content)
 
@@ -38,7 +49,7 @@ class Service:
         }
 
     def get_played_tracks(self):
-        url = self.PLAYED_TRACKS_URL.format(self.address)
+        url = self.PLAYED_TRACKS.format(self.address)
         response = requests.get(url)
         root = et.fromstring(response.content)
 
