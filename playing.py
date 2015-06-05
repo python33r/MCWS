@@ -8,10 +8,4 @@ config = ConfigParser()
 config.read("mcws.config")
 
 service = mcws.Service(config["server"]["address"])
-
-if service.is_running:
-    playing = service.get_now_playing()
-    if playing is not None:
-        pprint(playing)
-else:
-    print("Service not running.")
+pprint(service.get_now_playing())
