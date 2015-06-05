@@ -8,4 +8,5 @@ config = ConfigParser()
 config.read("mcws.config")
 
 service = mcws.Service(config["server"]["address"])
+
 pprint(service.get_now_playing())
