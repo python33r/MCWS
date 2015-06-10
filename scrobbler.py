@@ -4,7 +4,6 @@ import mcws
 import pylast
 import time
 from configparser import ConfigParser
-from pprint import pprint
 
 config = ConfigParser()
 config.read("mcws.config")
@@ -21,14 +20,16 @@ previous = None
 while True:
     track = service.get_now_playing()
     if track:
-        this = track["artist"]+track["album"]+track["title"]
+        this = (track["title"], track["artist"], track["album"])
         if this != previous:
-            print()
-            pprint(track)
+            print("{0} [{1} - {2}]".format(*this))
+            elapsed = time.strptime(track["elapsed"], "%M:%S")
+            elapsed_seconds = 60*elapsed.tm_min + elapsed.tm_sec
+            start = int(time.time()) - elapsed_seconds
             lastfm.scrobble(
               artist=track["artist"],
               album=track["album"],
               title=track["title"],
-              timestamp=int(time.time()))
+              timestamp=start)
             previous = this
     time.sleep(30)
