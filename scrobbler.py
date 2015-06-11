@@ -22,7 +22,7 @@ while True:
     if track:
         this = (track["title"], track["artist"], track["album"])
         if this != previous:
-            print("{0} [{1} - {2}]".format(*this))
+            print("{0} [{1} - {2}]".format(*this), flush=True)
             elapsed = time.strptime(track["elapsed"], "%M:%S")
             elapsed_seconds = 60*elapsed.tm_min + elapsed.tm_sec
             start = int(time.time()) - elapsed_seconds
