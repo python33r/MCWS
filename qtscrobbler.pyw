@@ -32,7 +32,7 @@ class Scrobbler(QWidget):
 
     def createWidgets(self):
         self.now = QLineEdit()
-        self.now.setStyleSheet("font-weight: bold")
+        self.now.setStyleSheet("color: red; font-weight: bold")
         self.now.setReadOnly(True)
         self.history = QTextBrowser()
 
@@ -56,7 +56,7 @@ class Scrobbler(QWidget):
             this = (track["title"], track["artist"], track["album"])
             if this != self.previous:
                 self.now.setText(track["title"])
-                self.history.insertHtml("{0} [{1} - {2}]<br>".format(*this))
+                self.history.insertHtml("<b>{0}</b> [{1} - {2}]<br>".format(*this))
                 elapsed = time.strptime(track["elapsed"], "%M:%S")
                 elapsed_seconds = 60*elapsed.tm_min + elapsed.tm_sec
                 start = int(time.time()) - elapsed_seconds
